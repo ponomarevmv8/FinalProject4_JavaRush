@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(schema = "world", name = "country_language")
-@Data
 public class CountryLanguage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +26,43 @@ public class CountryLanguage {
 
     private BigDecimal percentage;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public Boolean getOfficial() {
+        return isOfficial;
+    }
+
+    public void setOfficial(Boolean official) {
+        isOfficial = official;
+    }
+
+    public BigDecimal getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(BigDecimal percentage) {
+        this.percentage = percentage;
+    }
 }
