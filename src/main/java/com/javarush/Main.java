@@ -49,6 +49,24 @@ public class Main {
 
         Main main = new Main();
         List<City> allCities = main.fetchData(main);
+        List<CityCountry> preparedData = main.transformData(allCities);
+        main.pushToRedis(preparedData);
+
+        main.sessionFactory.getCurrentSession().close();
+
+        List<Integer> ids = List.of(3, 2545, 123, 4, 189, 89, 3458, 1189, 10, 102, 23, 1424, 137, 52);
+
+        long startRedis = System.currentTimeMillis();
+        main.testRedisData(ids);
+        long stopRedis = System.currentTimeMillis();
+
+        long startMysql = System.currentTimeMillis();
+        main.testMysqlData(ids);
+        long stopMysql = System.currentTimeMillis();
+
+        System.out.printf("%s:\t%d ms\n", "Redis", (stopRedis - startRedis));
+        System.out.printf("%s:\t%d ms\n", "MySQL", (stopMysql - startMysql));
+
         main.shutdown();
     }
 
@@ -101,8 +119,6 @@ public class Main {
             for (int i = 0; i < totalCount; i += step) {
                 allCities.addAll(main.cityDAO.getItems(i, step));
             }
-            List<CityCountry> preparedData = main.transformData(allCities);
-            main.pushToRedis(preparedData);
             session.getTransaction().commit();
             return allCities;
         }
@@ -163,6 +179,17 @@ public class Main {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void testMysqlData(List<Integer> ids) {
+        try (Session session = sessionFactory.getCurrentSession()) {
+            session.beginTransaction();
+            for (Integer id : ids) {
+                City city = cityDAO.getById(id);
+                Set<CountryLanguage> languages = city.getCountry().getLanguages();
+            }
+            session.getTransaction().commit();
         }
     }
 }
